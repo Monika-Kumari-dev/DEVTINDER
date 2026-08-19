@@ -1,11 +1,17 @@
 const express =  require('express');
 const app = express();
-
+const {adminAuth} = require("./middlewares/auth")
 // app.delete("/user",(req,res) =>{
 //     res.send("Deleted successfully!");
 // });
 app.get("/test",(req,res) =>{
     res.send("Hello my loveeeee");
+});
+app.use("/admin",adminAuth);
+app.use("/admin", adminAuth);
+
+app.get("/admin/getAllData", (req, res) => {
+    res.send("All data sent");
 });
 
 // app.post("/user",(req,res) =>{
@@ -23,17 +29,17 @@ app.get(/^\/a(bc)?d$/,(req,res) =>{
 //     console.log(req.params);
 //     res.send({firstName:"Monika",lastName:"S"});
 // });
-app.use(
-    "/user",(req,res,next) =>{
-        console.log("Handling the route user!!");
-        next();
-        res.send("Response!!");
-    },
-    (req,res) =>{
-        console.log("Handling the route user 2!!");
-        res.send("2nd Response!!");
-    }
-);
+// app.use(
+//     "/user",(req,res,next) =>{
+//         console.log("Handling the route user!!");
+//         next();
+//         res.send("Response!!");
+//     },
+//     (req,res) =>{
+//         console.log("Handling the route user 2!!");
+//         res.send("2nd Response!!");
+//     }
+// );
 
 app.listen(3000,() =>{
     console.log("Server is successfully listening on port 3000...");
