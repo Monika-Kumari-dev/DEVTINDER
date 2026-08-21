@@ -21,7 +21,27 @@ const userSchema = new mongoose.Schema({
         type:Number
     },
     gender:{
-        type:String
-    }
-});
+        type:String,
+        required: [true,'Gender is required'],
+        trim:true,
+        validate(value){
+            if (!["male","female","others"].includes(value)){
+                throw new Error("Gender data is not valid");
+            }
+        },
+
+    },
+    about:{
+        type:String,
+        default:"This is a default about of the user!",
+    },
+    Skills:{
+        type:[String],
+    },},
+    {
+    
+        timestamps:true,
+    },
+
+);
 module.exports = mongoose.model("User",userSchema);
