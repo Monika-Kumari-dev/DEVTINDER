@@ -21,12 +21,13 @@ const userAuth = async (req, res, next) => {
         throw new Error("Token is not valid!!!!!!!");
     }
     // Validate the token
-    const decodeObj = await jwt.verify(token, "");
+    const decodeObj = await jwt.verify(token, "Monikatinder$123");
     const { _id } = decodeObj;
     const user = await User.findById(_id);
     if (!user) {
       throw new Error("User not found");
     }
+    req.user = user;
     next();
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
