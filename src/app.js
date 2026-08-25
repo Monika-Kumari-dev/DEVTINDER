@@ -3,14 +3,18 @@ const app = express();
 app.use(express.json());
 const connectDB = require("./config/database")
 const jwt = require("jsonwebtoken");
-const {userAuth} = require("./middlewares/auth");
+const authRouter = require("./Routes/auth");
+const profileRouter = require("./Routes/profile");
+const RequestRouter = require("./Routes/Request");
 const User = require("./models/user");
-const bcrypt = require("bcrypt");
-const cookieParser = require("cookie-parser");
-// const jwt = require("jsonwebtoken");
-const {validateSignUpData} = require("./utils/validation");
 
+const cookieParser = require("cookie-parser");
 app.use(cookieParser());
+// const jwt = require("jsonwebtoken");
+app.use("/",authRouter);
+app.use("/",RequestRouter);
+app.use("/",profileRouter);
+
 
 app.get("/user",async(req,res) =>{
     const userEmail = req.query.emailId;
@@ -26,33 +30,7 @@ app.get("/user",async(req,res) =>{
 });
 //Feed API -GET /feed - get all the users from the database 
 app.get("/feed",(req,res) =>{});
-app.post("/signup",async(req,res) =>{
-//validation of data
-try{ 
-    console.log(req.body);
-validateSignUpData(req);
-const {firstName,lastName,emailId,password,gender} = req.body;
-//Encrypt the password and then store into database
 
-//Encrypt the password
-const passwordHash =  await bcrypt.hash(password,10);
-console.log(passwordHash);
-//Creating a new instance of the User model
- const user = new User ({
-    firstName,
-    lastName,
-    emailId,
-    password:passwordHash,
-    gender,
- });
-
-
-   await user.save();
-res.send("user created successfully");
-} catch (err){
-    res.status(400).send("Error saving user:"+err.message);
-}
-});
 app.delete("/user",async(req,res) =>{
     const userId = req.body.userId;
     try{
@@ -122,32 +100,8 @@ app.post("/login",async(req,res) =>{
         res.status(400).send("Error: "+err.message);
     }
 });
-app.get("/profile",userAuth,async(req,res) =>{try{
-    const cookies = req.cookies;
-    const {token} = cookies;
-    if(!token){
-        throw new Error("Invalid Token");
-    }
-    //validate my token
-    const decodedMessage = await jwt.verify(token,"Monikatinder$123")
 
-    // console.log(decodedMessage);
-    const{ _id } = decodedMessage;
-    console.log("Logged In user is:" + _id);
-    const user = await User.findById(_id);
-    if(!user){
-        throw new Error("User does not exist");
-    }
-   res.send(user);
-}catch(err){
-    res.status(400).send("Error : " + err.message);
-}
-});
-app.post("/sendConnectionRequest",userAuth,async(req,res) =>{
-   const user = req.user;
-    console.log("Sending the connection request ");
-    res.send(user.firstName+"Connection Request Send");
-});
+
 connectDB();
 app.listen(1515,() =>{
     console.log("Server is successfully listening on port 1515...");
