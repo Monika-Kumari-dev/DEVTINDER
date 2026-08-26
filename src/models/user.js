@@ -6,13 +6,17 @@ const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
+      required: true,
+      minLength: 4,
+      maxLength: 50,
     },
     lastName: {
       type: String,
     },
     emailId: {
       type: String,
-      required: true,
+      lowercase:true,
+      required:true,
       Unique: true,
       trim: true,
       validate(value) {
@@ -52,6 +56,9 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+User.find({firstName:"Monika",lastName:"kumari"});
+userSchema.index({firstName:1 ,lastName:1});
+
 userSchema.methods.getJWT = async function () {
   const user = this;
   const token = await jwt.sign({ _id: user._id }, "Monikatinder$123", {
