@@ -7,13 +7,14 @@ const authRouter = require("./Routes/auth");
 const profileRouter = require("./Routes/profile");
 const RequestRouter = require("./Routes/Request");
 const User = require("./models/user");
-
+const userRouter = require("./Routes/user");
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 // const jwt = require("jsonwebtoken");
 app.use("/",authRouter);
 app.use("/",RequestRouter);
 app.use("/",profileRouter);
+app.use("/", userRouter);
 
 
 app.get("/user",async(req,res) =>{
